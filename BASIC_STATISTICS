@@ -1,1 +1,59 @@
+import pandas as pd
+
+# Load the dataset
+data = pd.read_csv('C:\\Users\\Shubham\\OneDrive\\Documents\\DS ASSIGNMENTS\\Basic stats - 1\\sales_data_with_discounts.csv')
+
+# Display basic info and first few rows
+data.info()
+data.head()
+
+# Define numerical columns
+numerical_cols = ['Volume', 'Avg Price', 'Total Sales Value', 'Discount Rate (%)', 'Discount Amount', 'Net Sales Value']
+
+# Descriptive statistics
+descriptive_stats = data[numerical_cols].agg(['mean', 'median', 'std', 'min', 'max'])
+print(descriptive_stats)
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+sns.set(style="whitegrid")
+
+# Plot histograms
+fig, axes = plt.subplots(3, 2, figsize=(12, 10))
+for i, col in enumerate(numerical_cols):
+    sns.histplot(data[col], bins=20, kde=True, ax=axes[i//2, i%2])
+    axes[i//2, i%2].set_title(f'Distribution of {col}')
+plt.tight_layout()
+plt.show()
+
+# Plot boxplots for outlier detection
+fig, axes = plt.subplots(3, 2, figsize=(12, 10))
+for i, col in enumerate(numerical_cols):
+    sns.boxplot(data[col], ax=axes[i//2, i%2])
+    axes[i//2, i%2].set_title(f'Boxplot of {col}')
+plt.tight_layout()
+plt.show()
+
+from sklearn.preprocessing import StandardScaler
+
+scaler = StandardScaler()
+standardized_data = scaler.fit_transform(data[numerical_cols])
+
+# Convert back to DataFrame for visualization
+standardized_df = pd.DataFrame(standardized_data, columns=numerical_cols)
+
+# Show the comparison
+print('Original Data:\n', data[numerical_cols].head())
+print('Standardized Data:\n', standardized_df.head())
+
+# Perform one-hot encoding
+categorical_cols = ['Day', 'SKU', 'City', 'BU', 'Brand', 'Model']
+data_encoded = pd.get_dummies(data, columns=categorical_cols)
+
+# Show the transformed data
+print(data_encoded.head())
+# Save the processed data to a CSV file
+data_encoded.to_csv('processed_sales_data.csv', index=False)
+
 
